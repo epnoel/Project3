@@ -134,20 +134,28 @@ int main() {
 
 	auto start = high_resolution_clock::now();
 
+	cout << "Reading in all data..." << endl;
+
 
 	readData(fileName, v, m, um);
 	Website test(v, m, um);
+
+	cout << "Done." << endl;
+	cout << endl;
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop - start);
 
 
 	cout << "Execution time = " << duration.count() << " milliseconds = " << (double) duration.count() / (double) 1000 << " seconds." << endl;
+	cout << endl;
 
 	string testOpt;
 	int n = 0;
 	string websiteOption;
 	cout << "Welcome to Malicious Website Sorter" << endl;
+	cout << endl;
+
 	while (testOpt != "5") {
 		printMenu();
 		cin >> testOpt;
@@ -158,13 +166,15 @@ int main() {
 		if (testOpt == "1") {
 
 			cout << "Which website would you like to search for? Make sure you include www. in the website address" << endl;
+			cout << endl;
 			cin >> websiteOption;
 			cout << endl;
 			while (true) {
 				cout << "Which Data Structure would you like to search in " << endl;
 				printOption();
 				cin >> testOpt;
-				bool res;
+				cout << endl;
+				int res;
 				if (testOpt == "1") {
 					start = high_resolution_clock::now();
 
@@ -179,8 +189,9 @@ int main() {
 					}
 
 					stop = high_resolution_clock::now();
-					duration = duration_cast<milliseconds>(stop - start);
-					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					auto duration = duration_cast<microseconds>(stop - start);
+					cout << endl;
+					cout << "Execution Time: " << duration.count() << " microseconds = " << (double)duration.count() / (double)1000000;
 					cout << " seconds " << endl;
 
 					break;
@@ -200,8 +211,9 @@ int main() {
 					}
 
 					stop = high_resolution_clock::now();
-					duration = duration_cast<milliseconds>(stop - start);
-					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					auto duration = duration_cast<microseconds>(stop - start);
+					cout << endl;
+					cout << "Execution Time: " << duration.count() << " microseconds = " << (double)duration.count() / (double)1000000;
 					cout << " seconds " << endl;
 
 					break;
@@ -221,14 +233,16 @@ int main() {
 					}
 
 					stop = high_resolution_clock::now();
-					duration = duration_cast<milliseconds>(stop - start);
-					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					auto duration = duration_cast<microseconds>(stop - start);
+					cout << endl;
+					cout << "Execution Time: " << duration.count() << " microseconds = " << (double)duration.count() / (double)1000000;
 					cout << " seconds " << endl;
 
 					break;
 				}
 				else {
 					cout << "Not a valid option. Please try again." << endl;
+					cout << endl;
 				}
 			}
 		}
@@ -236,12 +250,14 @@ int main() {
 		// Option 2
 		else if (testOpt == "2") {
 			cout << "Enter first letter of website: " << endl;
+			cout << endl;
 			cin >> websiteOption;
+			cout << endl;
 			while (true) {
 				cout << "Which Data Structure would you like to search in " << endl;
 				printOption();
 				cin >> testOpt;
-				bool res;
+				int res;
 				if (testOpt == "1") {
 					start = high_resolution_clock::now();
 
@@ -290,9 +306,13 @@ int main() {
 		}
 		else if (testOpt == "4") {
 			cout << "Which website would you like to add to our list?" << endl;
+			cout << endl;
 			cin >> websiteOption;
+			cout << endl;
 			cout << "Is the website malicious? Enter 0 for 'no', enter 1 for 'yes', enter 2 for 'not sure'" << endl;
+			cout << endl;
 			cin >> testOpt;
+			cout << endl;
 
 			while (true) {
 				if (testOpt == "0" || testOpt == "1" || testOpt == "2") {
