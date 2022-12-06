@@ -164,6 +164,30 @@ void printWebsitesByChar(vector<vector<pair<string, bool>>> v, char c) {
 
 }
 
+void iterateMap(map<string, bool> m, char c) {
+
+	map<string, bool>::iterator itr;
+	cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
+	for (itr = m.begin(); itr != m.end(); itr++) {
+		if (itr->first[0] == c) {
+			cout << itr->first << endl;
+			cout << itr->second << endl;
+		}
+	}
+}
+
+void iterateUnorderedMap(unordered_map<string, bool> um, char c) {
+
+	unordered_map<string, bool>::iterator itr;
+	cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
+	for (itr = um.begin(); itr != um.end(); itr++) {
+		if (itr->first[0] == c) {
+			cout << itr->first << endl;
+			cout << itr->second << endl;
+		}
+	}
+}
+
 class Website {
 public:
 	Website() {
@@ -250,25 +274,11 @@ public:
 	}
 
 	void printMapWebsiteListByChar(char c) {
-		map<string, bool>::iterator itr;
-		cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
-		for (itr = m.begin(); itr != m.end(); itr++) {
-			if (itr->first.at(0) == c) {
-				cout << itr->first << endl;
-				cout << itr->second << endl;
-			}
-		}
+		iterateMap(m, c);
 	}
 
 	void printUnorderedMapWebsiteListByChar(char c) {
-		unordered_map<string, bool>::iterator itr;
-		cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
-		for (itr = um.begin(); itr != um.end(); itr++) {
-			if (itr->first.at(0) == c) {
-				cout << itr->first << endl;
-				cout << itr->second << endl;
-			}
-		}
+		iterateUnorderedMap(um, c);
 	}
 
 	void insertWebsiteInto2DVector(string website, bool mal) {
@@ -281,6 +291,7 @@ public:
 
 		if (binarySearchWebsiteMaliciousness(v[index], website) == -1) {
 			v[index].push_back(make_pair(concatWebsite, mal));
+			quickSort(v[index], 0, v[index].size() - 1);
 			cout << website << " has been successfully added to our database." << endl;
 		}
 		else {
