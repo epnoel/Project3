@@ -257,6 +257,7 @@ int main() {
 				cout << "Which Data Structure would you like to search in " << endl;
 				printOption();
 				cin >> testOpt;
+				cout << endl;
 				int res;
 				if (testOpt == "1") {
 					start = high_resolution_clock::now();
@@ -298,11 +299,13 @@ int main() {
 				}
 				else {
 					cout << "Not a valid option. Please try again." << endl;
+					cout << endl;
 				}
 			}
 		}
 		else if (testOpt == "3") {
-			cout << "There are " << um.size() << " websites in the database" << endl;
+			cout << "There are " << test.returnSize() << " websites in the database" << endl;
+			cout << endl;
 		}
 		else if (testOpt == "4") {
 			cout << "Which website would you like to add to our list?" << endl;
