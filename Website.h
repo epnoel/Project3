@@ -254,7 +254,8 @@ public:
 		cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
 		for (itr = m.begin(); itr != m.end(); itr++) {
 			if (itr->first.at(0) == c) {
-				cout << itr->first << "           " << itr->second << endl;
+				cout << itr->first << endl;
+				cout << itr->second << endl;
 			}
 		}
 	}
@@ -264,7 +265,8 @@ public:
 		cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
 		for (itr = um.begin(); itr != um.end(); itr++) {
 			if (itr->first.at(0) == c) {
-				cout << itr->first << "           " << itr->second << endl;
+				cout << itr->first << endl;
+				cout << itr->second << endl;
 			}
 		}
 	}
