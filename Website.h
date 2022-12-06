@@ -335,6 +335,10 @@ public:
 		}
 	}
 
+	int returnSize() {
+		return um.size();
+	}
+
 private:
 	vector<vector<pair<string, bool>>> v; // 2D vector
 	map<string, bool> m;
