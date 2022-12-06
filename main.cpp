@@ -156,12 +156,9 @@ void printWebsitesByChar(vector<vector<pair<string, bool>>> v, char c) {
 	temp += c;
 	int index = getIndex(temp);
 
-	// Debug
-	//cout << "v[" << index << "].size() = " << v[index].size() << endl;
-
 	int count = 0;
 
-	cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
+	cout << "Website:                 " << setw(40) << "Maliciousness:" << endl;
 	for (unsigned int i = 0; i < v[index].size(); i++) {
 		count++;
 		cout << v[index].at(i).first << endl;
@@ -171,23 +168,23 @@ void printWebsitesByChar(vector<vector<pair<string, bool>>> v, char c) {
 
 }
 
-class RenameClass {
+class Website {
 public:
-	RenameClass() {
+	Website() {
 		v.resize(36);
 	}
 
-	RenameClass(vector<vector<pair<string, bool>>>& v, map<string, bool>& m, unordered_map<string, bool>& um) {
+	Website(vector<vector<pair<string, bool>>>& v, map<string, bool>& m, unordered_map<string, bool>& um) {
 		this->v = v;
 		this->m = m;
 		this->um = um;
 	}
 
-	void set2DVector(vector<vector<pair<string, bool>>> &v) {
+	void set2DVector(vector<vector<pair<string, bool>>>& v) {
 		this->v = v;
 	}
 
-	void setMap(map<string, bool> &m) {
+	void setMap(map<string, bool>& m) {
 		this->m = m;
 	}
 
@@ -209,7 +206,7 @@ public:
 			return mal;
 		}
 
-		
+
 		cout << "Sorry. " << websiteName << " could not be found" << endl;
 		//v[index].push_back(make_pair(concatWebsite, 1));
 		return -1;
@@ -274,6 +271,59 @@ public:
 				cout << "Website:                 " << setw(20) << "Maliciousness:" << endl;
 				cout << itr->first << "           " << itr->second << endl;
 			}
+		}
+	}
+
+	void insertWebsiteInto2DVector(string website, bool mal) {
+		string concatWebsite = website;
+		removeHTTPSPart(concatWebsite);
+		removeWWWPart(concatWebsite);
+
+		int index = 0;
+		index = getIndex(concatWebsite);
+
+		if (binarySearchWebsiteMaliciousness(v[index],website) == -1) {
+			v[index].push_back(make_pair(concatWebsite, mal));
+			cout << website << " has been successfully added to our database." << endl;
+		}
+		else {
+			cout << "This website cannot be added. It is already in the database." << endl;
+		}
+
+	}
+
+	void insertWebsiteIntoMap(string website, bool mal) {
+		string concatWebsite = website;
+		removeHTTPSPart(concatWebsite);
+		removeWWWPart(concatWebsite);
+
+		map<string, bool>::iterator itr;
+		itr = m.find(concatWebsite);
+
+		if (itr == m.end()) {
+			m[concatWebsite] = mal;
+			//cout << website << " has been successfully added to our database." << endl;
+		}
+		else {
+			//cout << "This website cannot be added. It is already in the database." << endl;
+		}
+
+	}
+
+	void insertWebsiteIntoUnorderedMap(string website, bool mal) {
+		string concatWebsite = website;
+		removeHTTPSPart(concatWebsite);
+		removeWWWPart(concatWebsite);
+
+		unordered_map<string, bool>::iterator itr;
+		itr = um.find(concatWebsite);
+
+		if (itr == um.end()) {
+			um[concatWebsite] = mal;
+			//cout << website << " has been successfully added to our database." << endl;
+		}
+		else {
+			//cout << "This website cannot be added. It is already in the database." << endl;
 		}
 	}
 
@@ -394,14 +444,16 @@ void printMenu() {
 	cout << "1. Search for website." << endl;
 	cout << "2. Show website maliciousness by first character." << endl;
 	cout << "3. Show website list size." << endl;
-	cout << "4. Add a malicious website to the list." << endl;
+	cout << "4. Add a website to the list." << endl;
 	cout << "5. Exit" << endl;
+	cout << endl;
 }
 
 void printOption() {
 	cout << "1. 2D Vector" << endl;
 	cout << "2. Map" << endl;
 	cout << "3. Unordered Map" << endl;
+	cout << endl;
 }
 
 int main() {
@@ -417,16 +469,13 @@ int main() {
 
 
 	readData(fileName, v, m, um);
-	RenameClass test(v, m, um);
+	Website test(v, m, um);
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop - start);
 
-	cout << "Execution time = " << duration.count() << " milliseconds = " << (double) duration.count() / (double) 1000 << " seconds." << endl;
 
-	cout << "google.com (2D Vector): " << test.getMalicious2DVector("https://www.google.com") << endl;
-	cout << endl;
-	//printWebsitesByChar(v, 'w');
+	cout << "Execution time = " << duration.count() << " milliseconds = " << (double) duration.count() / (double) 1000 << " seconds." << endl;
 
 	string testOpt;
 	int n = 0;
@@ -447,9 +496,11 @@ int main() {
 			while (true) {
 				cout << "Which Data Structure would you like to search in " << endl;
 				printOption();
-				cin >> n;
+				cin >> testOpt;
 				bool res;
-				if (n == 1) {
+				if (testOpt == "1") {
+					start = high_resolution_clock::now();
+
 					res = test.getMalicious2DVector(websiteOption);
 					if (res != -1) {
 						if (res == 1) {
@@ -459,9 +510,18 @@ int main() {
 							cout << websiteOption << " is safe according to our databases." << endl;
 						}
 					}
+
+					stop = high_resolution_clock::now();
+					duration = duration_cast<milliseconds>(stop - start);
+					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					cout << " seconds " << endl;
+
 					break;
 				}
-				else if (n == 2) {
+				else if (testOpt == "2") {
+
+					start = high_resolution_clock::now();
+
 					res = test.getMaliciousMap(websiteOption);
 					if (res != -1) {
 						if (res == 1) {
@@ -471,9 +531,18 @@ int main() {
 							cout << websiteOption << " is safe according to our databases." << endl;
 						}
 					}
+
+					stop = high_resolution_clock::now();
+					duration = duration_cast<milliseconds>(stop - start);
+					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					cout << " seconds " << endl;
+
 					break;
 				}
-				else if (n == 3) {
+				else if (testOpt == "3") {
+
+					start = high_resolution_clock::now();
+
 					res = test.getMaliciousUnorderedMap(websiteOption);
 					if (res != -1) {
 						if (res == 1) {
@@ -483,6 +552,12 @@ int main() {
 							cout << websiteOption << " is safe according to our databases." << endl;
 						}
 					}
+
+					stop = high_resolution_clock::now();
+					duration = duration_cast<milliseconds>(stop - start);
+					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					cout << " seconds " << endl;
+
 					break;
 				}
 				else {
@@ -498,18 +573,44 @@ int main() {
 			while (true) {
 				cout << "Which Data Structure would you like to search in " << endl;
 				printOption();
-				cin >> n;
+				cin >> testOpt;
 				bool res;
-				if (n == 1) {
+				if (testOpt == "1") {
+					start = high_resolution_clock::now();
+
 					test.print2DVectorWebsiteListByChar(websiteOption.at(0));
+
+					stop = high_resolution_clock::now();
+					duration = duration_cast<milliseconds>(stop - start);
+					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					cout << " seconds " << endl;
+
 					break;
 				}
-				else if (n == 2) {
+				else if (testOpt == "2") {
+
+					start = high_resolution_clock::now();
+
 					test.printMapWebsiteListByChar(websiteOption.at(0));
+
+					stop = high_resolution_clock::now();
+					duration = duration_cast<milliseconds>(stop - start);
+					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					cout << " seconds " << endl;
 					break;
 				}
-				else if (n == 3) {
+				else if (testOpt == "3") {
+
+					start = high_resolution_clock::now();
+
+
 					test.printUnorderedMapWebsiteListByChar(websiteOption.at(0));
+
+					stop = high_resolution_clock::now();
+					duration = duration_cast<milliseconds>(stop - start);
+					cout << "Execution Time: " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000;
+					cout << " seconds " << endl;
+
 					break;
 				}
 				else {
@@ -521,7 +622,29 @@ int main() {
 			cout << "There are " << um.size() << " websites in the database" << endl;
 		}
 		else if (testOpt == "4") {
+			cout << "Which website would you like to add to our list?" << endl;
+			cin >> websiteOption;
+			cout << "Is the website malicious? Enter 0 for 'no', enter 1 for 'yes', enter 2 for 'not sure'" << endl;
+			cin >> testOpt;
 
+			while (true) {
+				if (testOpt == "0" || testOpt == "1" || testOpt == "2") {
+					break;
+				}
+				cout << "Not a valid option. Please try again." << endl;
+				cin >> testOpt;
+			}
+
+			if (testOpt == "0") {
+				test.insertWebsiteInto2DVector(websiteOption, 0);
+				test.insertWebsiteIntoMap(websiteOption, 0);
+				test.insertWebsiteIntoUnorderedMap(websiteOption, 0);
+			}
+			else {
+				test.insertWebsiteInto2DVector(websiteOption, 1);
+				test.insertWebsiteIntoMap(websiteOption, 1);
+				test.insertWebsiteIntoUnorderedMap(websiteOption, 1);
+			}
 		}
 		else if (testOpt == "5") {
 			break;
