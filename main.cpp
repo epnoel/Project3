@@ -8,8 +8,9 @@ using namespace std::chrono;
 
 /* method to read data:
  * inputs: fileName + vector, map and unordered_map to store the data in
- * inputs line by line from csv file described by fileName 
+ * inputs line by line from csv file described by fileName
  * appends websites and their bool mal value (malicious or not) to vector v, map m, and unordered map um
+ * performs quick sort on the vector v
  * return: no returns
  */
 void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,bool> &m, unordered_map<string,bool> &um) {
@@ -36,6 +37,11 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
     int count = 0;
 
     getline(inFile, entireLine);
+
+    // initializing the vectors that keep time taken into insert into each data structure
+    long long int timeTakenInsertVector = 0;
+    long long int timeTakenInsertMap = 0;
+    long long int timeTakenInsertUnmap = 0;
 
     //while loop reads in the lines from the csv file and parses the data
     //stores them into the containers
@@ -74,7 +80,13 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
             index = website[0] - 22;
         }
 
-
+        // starting the clock that keeps timer for insertion into vector v
+        // insertion into vector v works as follows:
+        // 1) find if the website is already in the database by using find on unordered_map
+        // 2) if in find, push_back onto duplicate vector for debugging purposes
+        // 3) if not found, inserts into 2D vector v according to the beginning character
+        // count time of insertion into vector keeps account of this whole process
+        auto start = high_resolution_clock::now();
         unordered_map<string, pair<string,bool>>::iterator itr;
         itr = testUM.find(website);
         if (itr != testUM.end()) {
@@ -84,8 +96,23 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
             v[index].push_back(make_pair(website, malicious));
             count++;
         }
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);
+        timeTakenInsertVector = timeTakenInsertVector + duration.count();
+
+        start = high_resolution_clock::now();
         m[website] = malicious;
+        stop = high_resolution_clock::now();
+        duration = duration_cast<milliseconds>(stop - start);
+        timeTakenInsertMap = timeTakenInsertMap + duration.count();
+
+        start = high_resolution_clock::now();
         um[website] = malicious;
+        stop = high_resolution_clock::now();
+        duration = duration_cast<milliseconds>(stop - start);
+        timeTakenInsertUnmap = timeTakenInsertUnmap + duration.count();
+
+
         testUM[website] = make_pair(webBeforeRemoveHTTPs, malicious);
 
         // Debug
@@ -107,6 +134,11 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
     //cout << "map size = " << m.size() << endl;
     //cout << "unordered_map size = " << um.size() << endl;
     cout << endl;
+
+    // printing the execution time taken to insert
+    cout << "The execution time taken to insert all the websites into the vector: " << timeTakenInsertVector << endl;
+    cout << "The execution time taken to insert all the websites into the map: " << timeTakenInsertMap << endl;
+    cout << "The execution time taken to insert all the websites into the unordered map: " << timeTakenInsertUnmap << endl;
 
 }
 
@@ -153,7 +185,7 @@ int main() {
 
     // reads the data provided by fileName and inserts data to vector v, map m, unordered_map um
     readData(fileName, v, m, um);
-    Website test(v, m, um); // website object test 
+    Website test(v, m, um); // website object test
 
     cout << "Done." << endl;
     cout << endl;
@@ -263,7 +295,7 @@ int main() {
         }
 
         // Option 2: show website maliciousness by the fist character
-        // lists out the websites beginning with the character and their mal value 
+        // lists out the websites beginning with the character and their mal value
         else if (testOpt == "2") {
             cout << "Enter first letter of website: " << endl;
             cout << endl;
@@ -278,7 +310,7 @@ int main() {
                 if (testOpt == "1") { // search in vector v
                     start = high_resolution_clock::now();
 
-                    test.print2DVectorWebsiteListByChar(websiteOption.at(0)); // uses built in function in Website class 
+                    test.print2DVectorWebsiteListByChar(websiteOption.at(0)); // uses built in function in Website class
 
                     stop = high_resolution_clock::now();
                     duration = duration_cast<milliseconds>(stop - start);
@@ -287,11 +319,11 @@ int main() {
 
                     break;
                 }
-                else if (testOpt == "2") { // search in map m 
+                else if (testOpt == "2") { // search in map m
 
                     start = high_resolution_clock::now();
 
-                    test.printMapWebsiteListByChar(websiteOption.at(0)); // built in function in the website class 
+                    test.printMapWebsiteListByChar(websiteOption.at(0)); // built in function in the website class
 
                     stop = high_resolution_clock::now();
                     duration = duration_cast<milliseconds>(stop - start);
@@ -304,7 +336,7 @@ int main() {
                     start = high_resolution_clock::now();
 
 
-                    test.printUnorderedMapWebsiteListByChar(websiteOption.at(0)); // built in function with the website class 
+                    test.printUnorderedMapWebsiteListByChar(websiteOption.at(0)); // built in function with the website class
 
                     stop = high_resolution_clock::now();
                     duration = duration_cast<milliseconds>(stop - start);
@@ -319,11 +351,11 @@ int main() {
                 }
             }
         }
-        else if (testOpt == "3") { // shows a website list size 
+        else if (testOpt == "3") { // shows a website list size
             cout << "There are " << test.returnSize() << " websites in the database" << endl;
             cout << endl;
         }
-        else if (testOpt == "4") { // adds a website to the list 
+        else if (testOpt == "4") { // adds a website to the list
             cout << "Which website would you like to add to our list?" << endl;
             cout << endl;
             cin >> websiteOption;
@@ -341,21 +373,21 @@ int main() {
                 cin >> testOpt;
             }
 
-            if (testOpt == "0") { // appends to the vector, map and unordered map with mal value 0 
+            if (testOpt == "0") { // appends to the vector, map and unordered map with mal value 0
                 test.insertWebsiteInto2DVector(websiteOption, 0);
                 test.insertWebsiteIntoMap(websiteOption, 0);
                 test.insertWebsiteIntoUnorderedMap(websiteOption, 0);
-            } 
-            else { // appends to the vector, map and unordered map with mal value 0 
+            }
+            else { // appends to the vector, map and unordered map with mal value 0
                 test.insertWebsiteInto2DVector(websiteOption, 1);
                 test.insertWebsiteIntoMap(websiteOption, 1);
                 test.insertWebsiteIntoUnorderedMap(websiteOption, 1);
             }
         }
-        else if (testOpt == "5") { // exit option 
+        else if (testOpt == "5") { // exit option
             break;
         }
-        else { // discards invalid input 
+        else { // discards invalid input
             cout << "Not a valid option. Please try again." << endl;
         }
 
