@@ -13,13 +13,13 @@ using namespace std::chrono;
  * performs quick sort on the vector v
  * return: no returns
  */
-void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,bool> &m, unordered_map<string,bool> &um) {
+void readData(string fileName, vector<vector<pair<string, bool>>>& v, map<string, bool>& m, unordered_map<string, bool>& um) {
     ifstream inFile;
     inFile.open(fileName);
 
     v.resize(36);
 
-    vector<pair<string,string>> duplicates;
+    vector<pair<string, string>> duplicates;
 
     unordered_map<string, pair<string, bool>> testUM;
 
@@ -39,9 +39,15 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
     getline(inFile, entireLine);
 
     // initializing the vectors that keep time taken into insert into each data structure
-    long long int timeTakenInsertVector = 0;
-    long long int timeTakenInsertMap = 0;
-    long long int timeTakenInsertUnmap = 0;
+
+    auto start = high_resolution_clock::now();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+
+    auto timeTakenInsertVector = duration.count();
+    auto timeTakenInsertMap = duration.count();
+    auto timeTakenInsertUnmap = duration.count();
+
 
     //while loop reads in the lines from the csv file and parses the data
     //stores them into the containers
@@ -71,11 +77,11 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
         if (website[0] >= 65 && website[0] <= 90) {
             index = website[0] - 65;
         }
-            // If a-z
+        // If a-z
         else if (website[0] >= 97 && website[0] <= 122) {
             index = website[0] - 97;
         }
-            // If 0-9
+        // If 0-9
         else if (website[0] >= 48 && website[0] <= 57) {
             index = website[0] - 22;
         }
@@ -87,10 +93,10 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
         // 3) if not found, inserts into 2D vector v according to the beginning character
         // count time of insertion into vector keeps account of this whole process
         auto start = high_resolution_clock::now();
-        unordered_map<string, pair<string,bool>>::iterator itr;
+        unordered_map<string, pair<string, bool>>::iterator itr;
         itr = testUM.find(website);
         if (itr != testUM.end()) {
-            duplicates.push_back(make_pair(webBeforeRemoveHTTPs,itr->second.first));
+            duplicates.push_back(make_pair(webBeforeRemoveHTTPs, itr->second.first));
         }
         else {
             v[index].push_back(make_pair(website, malicious));
@@ -99,33 +105,28 @@ void readData(string fileName, vector<vector<pair<string,bool>>> &v, map<string,
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop - start);
         timeTakenInsertVector = timeTakenInsertVector + duration.count();
+        
 
         start = high_resolution_clock::now();
         m[website] = malicious;
         stop = high_resolution_clock::now();
         duration = duration_cast<milliseconds>(stop - start);
-        timeTakenInsertMap = timeTakenInsertMap + duration.count();
+        timeTakenInsertMap += duration.count();
 
         start = high_resolution_clock::now();
         um[website] = malicious;
         stop = high_resolution_clock::now();
         duration = duration_cast<milliseconds>(stop - start);
-        timeTakenInsertUnmap = timeTakenInsertUnmap + duration.count();
+        timeTakenInsertUnmap += duration.count();
 
 
         testUM[website] = make_pair(webBeforeRemoveHTTPs, malicious);
-
-        // Debug
-        //cout << "num = " << num << endl;
-        //cout << "website = " << website << endl;
-        //cout << "benignOrMalicious = " << benignOrMalicious << endl;
-        //cout << "malicious = " << malicious << endl;
 
     }
 
     //sorting the vector 'v' that stores the website using QUICKSORT
     for (unsigned int a = 0; a < v.size(); a++) {
-        quickSort(v[a],0,v[a].size()-1);
+        quickSort(v[a], 0, v[a].size() - 1);
     }
 
 
@@ -176,7 +177,7 @@ int main() {
     unordered_map<string, bool> um;
 
     //fileName store the path of the data
-    string fileName = "/Users/durgeshjha/Documents/University /Semester 4/Programming 2/GroupProject/urldataMain.csv";
+    string fileName = "urldataMain.csv"; // = "/Users/durgeshjha/Documents/University /Semester 4/Programming 2/GroupProject/urldataMain.csv";
 
     //starts keeping count of the time needed to read the data from CSV and store into the data structures used (vector, map and unorderedMap)
     auto start = high_resolution_clock::now();
@@ -185,7 +186,6 @@ int main() {
 
     // reads the data provided by fileName and inserts data to vector v, map m, unordered_map um
     readData(fileName, v, m, um);
-    Website test(v, m, um); // website object test
 
     cout << "Done." << endl;
     cout << endl;
@@ -193,8 +193,10 @@ int main() {
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop - start);
 
+    Website test(v, m, um); // website object test
 
-    cout << "Execution time = " << duration.count() << " milliseconds = " << (double) duration.count() / (double) 1000 << " seconds." << endl;
+
+    cout << "Execution time = " << duration.count() << " milliseconds = " << (double)duration.count() / (double)1000 << " seconds." << endl;
     cout << endl;
 
     string testOpt;
